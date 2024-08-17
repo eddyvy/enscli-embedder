@@ -12,7 +12,8 @@ class TestController(unittest.TestCase):
         multipart_data = MultipartEncoder(
             fields={
                 'file': ('test.txt', io.BytesIO(b'file content'), 'text/plain'),
-                'regex': '[a-z]',
+                'project_name': 'test_project',
+                'regex': '[a-z]'
             }
         )
 
@@ -35,6 +36,50 @@ class TestController(unittest.TestCase):
         self.assertEqual(file_request.get_filename(), 'test.txt')
         self.assertEqual(file_request.get_content(), b'file content')
         self.assertEqual(file_request.get_regex().pattern, '[a-z]')
+
+    def test_post_embedder_no_file(self):
+        multipart_data = MultipartEncoder(
+            fields={
+                'project_name': 'test_project',
+                'regex': '[a-z]'
+            }
+        )
+
+        req = func.HttpRequest(
+            method='POST',
+            url='/api/embedder',
+            headers={'Content-Type': multipart_data.content_type},
+            params={},
+            body=multipart_data.to_string()
+        )
+
+        resp = controller.post_embedder(req)
+
+        self.assertIsInstance(resp, func.HttpResponse)
+        self.assertEqual(resp.status_code, 400)
+        self.assertEqual(resp.get_body().decode(), 'No file uploaded')
+
+    def test_post_embedder_no_project_name(self):
+        multipart_data = MultipartEncoder(
+            fields={
+                'file': ('test.txt', io.BytesIO(b'file content'), 'text/plain'),
+                'regex': '[a-z]'
+            }
+        )
+
+        req = func.HttpRequest(
+            method='POST',
+            url='/api/embedder',
+            headers={'Content-Type': multipart_data.content_type},
+            params={},
+            body=multipart_data.to_string()
+        )
+
+        resp = controller.post_embedder(req)
+
+        self.assertIsInstance(resp, func.HttpResponse)
+        self.assertEqual(resp.status_code, 400)
+        self.assertEqual(resp.get_body().decode(), 'No project name provided')
 
 if __name__ == '__main__':
     unittest.main()

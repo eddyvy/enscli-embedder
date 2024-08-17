@@ -7,8 +7,9 @@ def post_embedder(req: func.HttpRequest) -> func.HttpResponse:
     try:
         file_request = FileRequest(req)
 
-        if file_request.get_filename() == "":
-            return func.HttpResponse("No file received", status_code=400)
+        error_message = file_request.error_message()
+        if error_message != None:
+            return func.HttpResponse(error_message, status_code=400)
     
         execute_embedding(file_request)
 
