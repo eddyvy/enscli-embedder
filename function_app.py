@@ -1,10 +1,10 @@
 import azure.functions as func
-from file_embedder.main import run
+from file_embedder.controller import post_embedder
 
 app = func.FunctionApp()
 
 @app.function_name(name="EnscliFileEmbedder")
-@app.route(route="req")
+@app.route(route="embedder",methods=["POST"])
 def main(req: func.HttpRequest) -> func.HttpResponse:
-    return run(req)
+    return post_embedder(req)
 
