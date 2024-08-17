@@ -13,7 +13,8 @@ class TestController(unittest.TestCase):
             fields={
                 "file": ("test.txt", io.BytesIO(b"file content"), "text/plain"),
                 "project_name": "test_project",
-                "regex": "[a-z]"
+                "parsing_param_1": "value_1",
+                "parsing_param_2": "value_2"
             }
         )
 
@@ -35,13 +36,13 @@ class TestController(unittest.TestCase):
         file_request = mock_execute_embedding.call_args[0][0]
         self.assertEqual(file_request.get_filename(), "test.txt")
         self.assertEqual(file_request.get_content(), b"file content")
-        self.assertEqual(file_request.get_regex().pattern, "[a-z]")
 
     def test_post_embedder_no_file(self):
         multipart_data = MultipartEncoder(
             fields={
                 "project_name": "test_project",
-                "regex": "[a-z]"
+                "parsing_param_1": "value_1",
+                "parsing_param_2": "value_2"
             }
         )
 
@@ -63,7 +64,8 @@ class TestController(unittest.TestCase):
         multipart_data = MultipartEncoder(
             fields={
                 "file": ("test.txt", io.BytesIO(b"file content"), "text/plain"),
-                "regex": "[a-z]"
+                "parsing_param_1": "value_1",
+                "parsing_param_2": "value_2"
             }
         )
 
@@ -86,8 +88,7 @@ class TestController(unittest.TestCase):
         multipart_data = MultipartEncoder(
             fields={
                 "file": ("test.txt", io.BytesIO(b"file content"), "text/plain"),
-                "project_name": "test_project",
-                "regex": "[a-z]"
+                "project_name": "test_project"
             }
         )
 

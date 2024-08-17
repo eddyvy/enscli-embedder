@@ -1,21 +1,24 @@
 import azure.functions as func
-import re
+
+from file_embedder.file_parser.parsing_params import ParsingParams
 
 class FileRequest:
     __input_file = None
-    __regex: re.Pattern | None = None
     __project_name: str = None
+    __parsing_params: ParsingParams
 
     def __init__(self, req: func.HttpRequest):
         for input_file in req.files.values():
             self.__input_file = input_file
             break
+
+        self.__parsing_params = ParsingParams()
         
         for key, value in req.form.items():
             if key == "project_name":
                 self.__project_name = value
-            elif key == "regex":
-                self.__regex = re.compile(value)
+            else:
+                self.__parsing_params.set_param(key, value)
             
     def error_message(self) -> str:
         if self.__input_file is None:
@@ -37,5 +40,5 @@ class FileRequest:
     def get_project_name(self) -> str:
         return self.__project_name
 
-    def get_regex(self) -> re.Pattern | None:
-        return self.__regex
+    def get_parsing_params(self) -> ParsingParams:
+        return self.__parsing_params
