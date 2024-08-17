@@ -15,4 +15,4 @@ def post_embedder(req: func.HttpRequest) -> func.HttpResponse:
 
         return func.HttpResponse("success", status_code=200)
     except Exception as e:
-        return func.HttpResponse(f"Error: {str(e)}", status_code=400)
+        return func.HttpResponse(f"Error: {str(e)}", status_code=500)

@@ -11,16 +11,16 @@ class TestFileRequest(unittest.TestCase):
     def setUpClass(cls):
         multipart_data = MultipartEncoder(
             fields={
-                'file': ('test.txt', io.BytesIO(b'file content'), 'text/plain'),
-                'regex': '[a-z]',
-                'project_name': 'test_project'
+                "file": ("test.txt", io.BytesIO(b"file content"), "text/plain"),
+                "regex": "[a-z]",
+                "project_name": "test_project"
             }
         )
 
         cls.req = func.HttpRequest(
-            method='POST',
-            url='/api/embedder',
-            headers={'Content-Type': multipart_data.content_type},
+            method="POST",
+            url="/api/embedder",
+            headers={"Content-Type": multipart_data.content_type},
             params={},
             body=multipart_data.to_string()
         )
@@ -31,7 +31,7 @@ class TestFileRequest(unittest.TestCase):
 
     def test_get_content(self):
         file_request = FileRequest(self.req)
-        self.assertEqual(file_request.get_content(), b'file content')
+        self.assertEqual(file_request.get_content(), b"file content")
 
     def test_project_name(self):
         file_request = FileRequest(self.req)
@@ -49,14 +49,14 @@ class TestFileRequest(unittest.TestCase):
     def test_error_message_no_file(self):
         multipart_data = MultipartEncoder(
             fields={
-                'project_name': 'test_project',
-                'regex': '[a-z]'
+                "project_name": "test_project",
+                "regex": "[a-z]"
             }
         )
                 
         req = func.HttpRequest(
-            method='POST',
-            url='/api/embedder',
+            method="POST",
+            url="/api/embedder",
             headers={},
             params={},
             body=multipart_data.to_string()
@@ -68,15 +68,15 @@ class TestFileRequest(unittest.TestCase):
     def test_error_message_no_project_name(self):
         multipart_data = MultipartEncoder(
             fields={
-                'file': ('test.txt', io.BytesIO(b'file content'), 'text/plain'),
-                'regex': '[a-z]',
+                "file": ("test.txt", io.BytesIO(b"file content"), "text/plain"),
+                "regex": "[a-z]",
             }
         )
 
         req = func.HttpRequest(
-            method='POST',
-            url='/api/embedder',
-            headers={'Content-Type': multipart_data.content_type},
+            method="POST",
+            url="/api/embedder",
+            headers={"Content-Type": multipart_data.content_type},
             params={},
             body=multipart_data.to_string()
         )
@@ -87,15 +87,15 @@ class TestFileRequest(unittest.TestCase):
     def test_error_message_no_regex(self):
         multipart_data = MultipartEncoder(
             fields={
-                'file': ('test.txt', io.BytesIO(b'file content'), 'text/plain'),
-                'project_name': 'test_project'
+                "file": ("test.txt", io.BytesIO(b"file content"), "text/plain"),
+                "project_name": "test_project"
             }
         )
 
         req = func.HttpRequest(
-            method='POST',
-            url='/api/embedder',
-            headers={'Content-Type': multipart_data.content_type},
+            method="POST",
+            url="/api/embedder",
+            headers={"Content-Type": multipart_data.content_type},
             params={},
             body=multipart_data.to_string()
         )
@@ -103,5 +103,5 @@ class TestFileRequest(unittest.TestCase):
         file_request = FileRequest(req)
         self.assertIsNone(file_request.error_message())
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
