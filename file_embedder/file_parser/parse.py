@@ -1,10 +1,9 @@
-import os
 from file_embedder.file_parser.get_llama_parse import get_llama_parse
 from file_embedder.file_parser.upload_llama_parse import upload_llama_parse_pdf
 from file_embedder.file_request import FileRequest
 from file_embedder.file_save.file_save import save_file
 
-def parse(file_request: FileRequest) -> str:
+def parse_to_text(file_request: FileRequest) -> str:
     extension = file_request.get_file_extension()
     if extension == "pdf":
         job_id = upload_llama_parse_pdf(

@@ -6,7 +6,7 @@ from unittest.mock import ANY, patch, MagicMock
 from requests_toolbelt import MultipartEncoder
 from file_embedder.file_parser.parsing_params import ParsingParams
 from file_embedder.file_request import FileRequest
-from file_embedder.file_parser.parse import parse
+from file_embedder.file_parser.parse import parse_to_text
 
 @patch("file_embedder.file_parser.parse.upload_llama_parse_pdf")
 @patch("file_embedder.file_parser.parse.get_llama_parse")
@@ -34,7 +34,7 @@ class TestParse(unittest.TestCase):
         mock_upload_llama_parse_pdf.return_value = "test_job_id"
         mock_get_llama_parse.return_value = "parsed content"
 
-        result = parse(file_request)
+        result = parse_to_text(file_request)
 
         mock_upload_llama_parse_pdf.assert_called_once_with(
             file_content=b"pdf content",
@@ -69,7 +69,7 @@ class TestParse(unittest.TestCase):
             body=multipart_data.to_string()
         ))
 
-        result = parse(file_request)
+        result = parse_to_text(file_request)
 
         self.assertEqual(result, "txt content")
 
@@ -93,7 +93,7 @@ class TestParse(unittest.TestCase):
             body=multipart_data.to_string()
         ))
 
-        result = parse(file_request)
+        result = parse_to_text(file_request)
 
         self.assertEqual(result, "md content")
 
@@ -117,7 +117,7 @@ class TestParse(unittest.TestCase):
             body=multipart_data.to_string()
         ))
 
-        result = parse(file_request)
+        result = parse_to_text(file_request)
 
         self.assertEqual(result, "csv content")
 
@@ -142,7 +142,7 @@ class TestParse(unittest.TestCase):
         ))
 
         with self.assertRaises(Exception) as context:
-            parse(file_request)
+            parse_to_text(file_request)
 
         self.assertEqual(str(context.exception), "Unsupported file extension")
 
