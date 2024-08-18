@@ -111,5 +111,26 @@ class TestFileRequest(unittest.TestCase):
         
         self.assertEqual(mock_parsing_params.set_param.call_count, 2)
 
+    def test_get_file_extension(self, _: MagicMock):
+        multipart_data = MultipartEncoder(
+            fields={
+                "file": ("test.PDF", io.BytesIO(b"file content"), "application/pdf"),
+                "project_name": "test_project",
+                "parsing_param_1": "value_1",
+                "parsing_param_2": "value_2"
+            }
+        )
+
+        req = func.HttpRequest(
+            method="POST",
+            url="/api/embedder",
+            headers={"Content-Type": multipart_data.content_type},
+            params={},
+            body=multipart_data.to_string()
+        )
+
+        file_request = FileRequest(req)
+        self.assertEqual(file_request.get_file_extension(), "pdf")
+
 if __name__ == "__main__":
     unittest.main()

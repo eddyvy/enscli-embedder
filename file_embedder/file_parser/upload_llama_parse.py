@@ -34,6 +34,8 @@ def upload_llama_parse_pdf(file_content: bytes, file_name: str, parsing_params: 
     multipart_data = MultipartEncoder(fields=fields)
 
     response = requests.request(method="POST", url=url, headers=headers, data=multipart_data.to_string())
+    response.raise_for_status()
+
     response_json = response.json()
     id_value = response_json.get("id")
     status = response_json.get("status")
@@ -51,6 +53,8 @@ def upload_llama_parse_pdf(file_content: bytes, file_name: str, parsing_params: 
     while status == "PENDING":
         time.sleep(2)
         response = requests.request(method="GET", url=get_url, headers=get_headers)
+        response.raise_for_status()
+
         response_json = response.json()
         status = response_json.get("status")
         times += 1

@@ -36,6 +36,11 @@ class FileRequest:
         if self.__input_file is None:
             return None
         return self.__input_file.stream.read()
+    
+    def get_file_extension(self) -> str:
+        if self.__input_file is None:
+            return ""
+        return self.__input_file.filename.split(".")[-1].lower()
 
     def get_project_name(self) -> str:
         return self.__project_name

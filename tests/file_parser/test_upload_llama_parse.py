@@ -13,11 +13,13 @@ class TestUploadLlamaParsePDF(unittest.TestCase):
         mock_getenv.return_value = "fake_api_key"
         mock_response_post = MagicMock()
         mock_response_post.json.return_value = {"id": "12345", "status": "PENDING"}
+        mock_response_post.raise_for_status = MagicMock()
         mock_response_get = MagicMock()
         mock_response_get.json.side_effect = [
             {"id": "12345", "status": "PENDING"},
             {"id": "12345", "status": "SUCCESS"}
         ]
+        mock_response_get.raise_for_status = MagicMock()
         mock_request.side_effect = [mock_response_post, mock_response_get, mock_response_get]
         mock_sleep.return_value = None
 
@@ -27,7 +29,6 @@ class TestUploadLlamaParsePDF(unittest.TestCase):
         parsing_params.set_param("parsing_instruction", "test_parsing_instruction")
         parsing_params.set_param("lang", "en")
 
-        
         fields = {
             "file": (file_name, file_content, "application/pdf"),
             "parsing_instruction": "test_parsing_instruction",
@@ -72,6 +73,9 @@ class TestUploadLlamaParsePDF(unittest.TestCase):
 
         self.assertEqual(mock_sleep.call_count, 2)
         mock_sleep.assert_has_calls([call(2), call(2)])
+
+        mock_response_post.raise_for_status.assert_called_once()
+        mock_response_get.raise_for_status.assert_called()
 
     @patch("file_embedder.file_parser.upload_llama_parse.time.sleep")
     @patch("file_embedder.file_parser.upload_llama_parse.requests.request")
