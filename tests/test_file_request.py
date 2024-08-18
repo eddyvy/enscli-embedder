@@ -14,6 +14,7 @@ class TestFileRequest(unittest.TestCase):
             fields={
                 "file": ("test.txt", io.BytesIO(b"file content"), "text/plain"),
                 "project_name": "test_project",
+                "remove_regex": "[1-9]",
                 "parsing_param_1": "value_1",
                 "parsing_param_2": "value_2"
             }
@@ -38,6 +39,10 @@ class TestFileRequest(unittest.TestCase):
     def test_project_name(self, _: MagicMock):
         file_request = FileRequest(self.req)
         self.assertEqual(file_request.get_project_name(), "test_project")
+
+    def test_remove_regex(self, _: MagicMock):
+        file_request = FileRequest(self.req)
+        self.assertEqual(file_request.get_remove_regex().pattern, "[1-9]")
     
     def test_error_message(self, _: MagicMock):
         file_request = FileRequest(self.req)
