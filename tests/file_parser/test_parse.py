@@ -48,7 +48,7 @@ class TestParse(unittest.TestCase):
         mock_get_llama_parse.assert_called_once_with("test_job_id")
         mock_save_file.assert_called_once_with(
             content="parsed content",
-            file_path="test_project/test.txt"
+            file_path="test_project/test_unfiltered.txt"
         )
 
         self.assertEqual(result, "parsed content")

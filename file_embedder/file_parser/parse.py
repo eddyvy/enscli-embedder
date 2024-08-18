@@ -14,9 +14,8 @@ def parse(file_request: FileRequest) -> str:
         )
         content = get_llama_parse(job_id)
 
-        file_name, _ = os.path.splitext(file_request.get_filename())
-        file_path_with_txt = file_request.get_project_name() + "/" + file_name + ".txt"
-        save_file(content=content, file_path=file_path_with_txt)
+        file_path = file_request.get_file_path_with_txt().replace(".txt", "_unfiltered.txt")
+        save_file(content=content, file_path=file_path)
 
         return content
     elif extension in ("txt", "md", "csv"):

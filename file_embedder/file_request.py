@@ -1,3 +1,4 @@
+import os
 import re
 import azure.functions as func
 
@@ -20,7 +21,7 @@ class FileRequest:
             if key == "project_name":
                 self.__project_name = value
             elif key == "remove_regex":
-                self.__remove_regex = re.compile(value)
+                self.__remove_regex = re.compile(value, re.MULTILINE)
             else:
                 self.__parsing_params.set_param(key, value)
             
@@ -49,8 +50,24 @@ class FileRequest:
     def get_project_name(self) -> str:
         return self.__project_name
     
+    def get_file_path(self) -> str:
+        return self.get_project_name() + "/" + self.get_filename()
+    
     def get_remove_regex(self) -> re.Pattern | None:
         return self.__remove_regex
 
     def get_parsing_params(self) -> ParsingParams:
         return self.__parsing_params
+    
+    def get_file_name_as_txt(self) -> str:
+        file_name, _ = os.path.splitext(self.get_filename())
+        return file_name + ".txt"
+    
+    def get_file_path_with_txt(self) -> str:
+        return self.get_project_name() + "/" + self.get_file_name_as_txt()
+    
+    def get_file_path_text_file(self) -> str:
+        if self.get_file_extension() in ("txt", "md", "csv"):
+            return self.get_file_path()
+        else:
+            return self.get_file_path_with_txt()

@@ -40,6 +40,10 @@ class TestFileRequest(unittest.TestCase):
         file_request = FileRequest(self.req)
         self.assertEqual(file_request.get_project_name(), "test_project")
 
+    def test_get_file_path(self, _: MagicMock):
+        file_request = FileRequest(self.req)
+        self.assertEqual(file_request.get_file_path(), "test_project/test.txt")
+
     def test_remove_regex(self, _: MagicMock):
         file_request = FileRequest(self.req)
         self.assertEqual(file_request.get_remove_regex().pattern, "[1-9]")
@@ -136,6 +140,116 @@ class TestFileRequest(unittest.TestCase):
 
         file_request = FileRequest(req)
         self.assertEqual(file_request.get_file_extension(), "pdf")
+
+    def test_get_file_name_as_txt(self, _: MagicMock):
+        multipart_data = MultipartEncoder(
+            fields={
+                "file": ("test.PDF", io.BytesIO(b"file content"), "application/pdf"),
+                "project_name": "test_project",
+                "parsing_param_1": "value_1",
+                "parsing_param_2": "value_2"
+            }
+        )
+
+        req = func.HttpRequest(
+            method="POST",
+            url="/api/embedder",
+            headers={"Content-Type": multipart_data.content_type},
+            params={},
+            body=multipart_data.to_string()
+        )
+
+        file_request = FileRequest(req)
+        
+        self.assertEqual(file_request.get_file_name_as_txt(), "test.txt")
+
+    def test_get_file_path_with_txt(self, _: MagicMock):
+        multipart_data = MultipartEncoder(
+            fields={
+                "file": ("test.PDF", io.BytesIO(b"file content"), "application/pdf"),
+                "project_name": "test_project",
+                "parsing_param_1": "value_1",
+                "parsing_param_2": "value_2"
+            }
+        )
+
+        req = func.HttpRequest(
+            method="POST",
+            url="/api/embedder",
+            headers={"Content-Type": multipart_data.content_type},
+            params={},
+            body=multipart_data.to_string()
+        )
+
+        file_request = FileRequest(req)
+        
+        self.assertEqual(file_request.get_file_path_with_txt(), "test_project/test.txt")
+
+    def test_get_file_path_text_file(self, _: MagicMock):
+        multipart_data = MultipartEncoder(
+            fields={
+                "file": ("test.js", io.BytesIO(b"file content"), "application/javascript"),
+                "project_name": "test_project",
+                "parsing_param_1": "value_1",
+                "parsing_param_2": "value_2"
+            }
+        )
+
+        req = func.HttpRequest(
+            method="POST",
+            url="/api/embedder",
+            headers={"Content-Type": multipart_data.content_type},
+            params={},
+            body=multipart_data.to_string()
+        )
+
+        file_request = FileRequest(req)
+        
+        self.assertEqual(file_request.get_file_path_text_file(), "test_project/test.txt")
+
+    def test_get_file_path_text_file_md(self, _: MagicMock):
+        multipart_data = MultipartEncoder(
+            fields={
+                "file": ("test.md", io.BytesIO(b"file content"), "text/plain"),
+                "project_name": "test_project",
+                "parsing_param_1": "value_1",
+                "parsing_param_2": "value_2"
+            }
+        )
+
+        req = func.HttpRequest(
+            method="POST",
+            url="/api/embedder",
+            headers={"Content-Type": multipart_data.content_type},
+            params={},
+            body=multipart_data.to_string()
+        )
+
+        file_request = FileRequest(req)
+        
+        self.assertEqual(file_request.get_file_path_text_file(), "test_project/test.md")
+
+    def test_get_file_path_text_file_csv(self, _: MagicMock):
+        multipart_data = MultipartEncoder(
+            fields={
+                "file": ("test.csv", io.BytesIO(b"file content"), "text/plain"),
+                "project_name": "test_project",
+                "parsing_param_1": "value_1",
+                "parsing_param_2": "value_2"
+            }
+        )
+
+        req = func.HttpRequest(
+            method="POST",
+            url="/api/embedder",
+            headers={"Content-Type": multipart_data.content_type},
+            params={},
+            body=multipart_data.to_string()
+        )
+
+        file_request = FileRequest(req)
+        
+        self.assertEqual(file_request.get_file_path_text_file(), "test_project/test.csv")
 
 if __name__ == "__main__":
     unittest.main()
