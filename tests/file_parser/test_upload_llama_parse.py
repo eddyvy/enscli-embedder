@@ -75,7 +75,7 @@ class TestUploadLlamaParsePDF(unittest.TestCase):
         mock_sleep.assert_has_calls([call(2), call(2)])
 
         mock_response_post.raise_for_status.assert_called_once()
-        mock_response_get.raise_for_status.assert_called()
+        self.assertEqual(mock_response_get.raise_for_status.call_count, 2)
 
     @patch("file_embedder.file_parser.upload_llama_parse.time.sleep")
     @patch("file_embedder.file_parser.upload_llama_parse.requests.request")
@@ -89,6 +89,7 @@ class TestUploadLlamaParsePDF(unittest.TestCase):
             {"id": "12345", "status": "PENDING"},
             {"id": "12345", "status": "SUCCESS"}
         ]
+        mock_response_get.raise_for_status = MagicMock()
         mock_request.side_effect = [mock_response_post, mock_response_get, mock_response_get]
         mock_sleep.return_value = None
 
@@ -139,6 +140,9 @@ class TestUploadLlamaParsePDF(unittest.TestCase):
         self.assertEqual(mock_sleep.call_count, 2)
         mock_sleep.assert_has_calls([call(2), call(2)])
 
+        mock_response_post.raise_for_status.assert_called_once()
+        self.assertEqual(mock_response_get.raise_for_status.call_count, 2)
+
     @patch("file_embedder.file_parser.upload_llama_parse.requests.request")
     @patch("file_embedder.file_parser.upload_llama_parse.os.getenv")
     def test_upload_llama_parse_pdf_no_api_key(self, mock_getenv, mock_request):
@@ -187,6 +191,7 @@ class TestUploadLlamaParsePDF(unittest.TestCase):
             {"id": "12345", "status": "PENDING"},
             {"id": "12345", "status": "ERROR"}
         ]
+        mock_response_get.raise_for_status = MagicMock()
         mock_request.side_effect = [mock_response_post, mock_response_get, mock_response_get]
         mock_sleep.return_value = None
 
@@ -213,8 +218,14 @@ class TestUploadLlamaParsePDF(unittest.TestCase):
             while True:
                 yield {"id": "12345", "status": "PENDING"}
 
+        def side_effect_raise_for_status():
+            while True:
+                yield
+
         mock_response_get = MagicMock()
         mock_response_get.json.side_effect = side_effect()
+        mock_response_get.raise_for_status = MagicMock()
+        mock_response_get.raise_for_status.side_effect = side_effect_raise_for_status()
 
         mock_request.side_effect = [mock_response_post] + [mock_response_get] * 100
         mock_sleep.return_value = None
@@ -230,7 +241,8 @@ class TestUploadLlamaParsePDF(unittest.TestCase):
 
         self.assertEqual(str(context.exception), "Max time exceeded to parse PDF file with LLAMA Cloud")
         self.assertEqual(mock_sleep.call_count, 60)
-        self.assertEqual(mock_sleep.call_count, 60)
+        self.assertEqual(mock_response_get.json.call_count, 60)
+        self.assertEqual(mock_response_get.raise_for_status.call_count, 60)
 
 if __name__ == "__main__":
     unittest.main()
