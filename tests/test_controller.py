@@ -3,11 +3,12 @@ from unittest.mock import patch, MagicMock
 import azure.functions as func
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 import io
-from file_embedder import controller
+from embed import controller
+
 
 class TestController(unittest.TestCase):
 
-    @patch("file_embedder.controller.execute_embedding")
+    @patch("embed.controller.execute_embedding")
     def test_post_embedder(self, mock_execute_embedding: MagicMock):
         multipart_data = MultipartEncoder(
             fields={
@@ -83,7 +84,7 @@ class TestController(unittest.TestCase):
         self.assertEqual(resp.status_code, 400)
         self.assertEqual(resp.get_body().decode(), "No project name provided")
 
-    @patch("file_embedder.controller.execute_embedding")
+    @patch("embed.controller.execute_embedding")
     def test_post_embedder_service_error(self, mock_execute_embedding: MagicMock):
         multipart_data = MultipartEncoder(
             fields={
@@ -107,6 +108,7 @@ class TestController(unittest.TestCase):
         self.assertIsInstance(resp, func.HttpResponse)
         self.assertEqual(resp.status_code, 500)
         self.assertEqual(resp.get_body().decode(), "Error: Test exception")
+
 
 if __name__ == "__main__":
     unittest.main()

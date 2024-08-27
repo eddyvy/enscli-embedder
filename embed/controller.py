@@ -1,12 +1,12 @@
 import logging
 import azure.functions as func
 
-from file_embedder.service import execute_embedding
+from embed.service import execute_embedding
 
 
-def post_embedder(req: func.HttpRequest) -> func.HttpResponse:
+def post_embed_project(req: func.HttpRequest) -> func.HttpResponse:
     try:
-        project_name = req.route_params.get('project_name')
+        project_name = req.route_params.get('project')
 
         file = None
         for input_file in req.files.values():
