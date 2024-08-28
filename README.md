@@ -68,3 +68,9 @@ To run the tests:
 ```sh
 pytest
 ```
+
+## Deploying the Project
+
+```sh
+func azure functionapp publish enscli-function-app
+```
