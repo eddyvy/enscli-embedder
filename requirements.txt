@@ -276,7 +276,7 @@ pyarrow==14.0.2
 pyarrow-hotfix==0.6
 pyasn1==0.6.0
 pyasn1_modules==0.4.0
-pyautogen==0.2.33
+ag2==0.2.33
 pycparser==2.22
 pycryptodome==3.20.0
 pydantic==2.8.2
